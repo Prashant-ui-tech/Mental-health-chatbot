@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindEase - Your Mental Health Companion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav>
+        <div>MindEase</div>
+        <ul>
+            <li>Home</li>
+            <li>Resources</li>
+            <li>About</li>
+            <li>Contact</li>
+        </ul>
+    </nav>
+
+    <!-- Center Content -->
+    <section class="center-content">
+        <h2>Your Mental Health Companion</h2>
+        <p>
+            MindEase is here to support your emotional well-being. Whether you are feeling overwhelmed or anxious.
+        </p>
+        <div class="image-content"></div>
+    </section>
+
+    <!-- Chat widget -->
+    <div class="chat-icon" onclick="toggleChat()">☁</div>
+
+    <div class="chat-widget" id="chatWidget" style="display: none;">
+        <div class="chat-header">
+            MindEase Chatbot
+            <span style="cursor: pointer;" onclick="toggleChat()">✕</span>
+        </div>
+
+        <div class="chat-body" id="chatBody"></div>
+
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Chat script -->
+    <script>
+        function toggleChat() {
+            const widget = document.getElementById('chatWidget');
+            widget.style.display = widget.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const message = input.value.trim();
+            if (!message) return;
+
+            appendMessage("You", message);
+            input.value = "";
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        session_id: "user_1",
+                        query: message
+                    })
+                });
+
+                const data = await response.json();
+                appendMessage("Bot", data.response);
+
+            } catch (error) {
+                appendMessage("Bot", "Oops! Something went wrong.");
+            }
+        }
+
+        function appendMessage(sender, text) {
+            const chatBody = document.getElementById("chatBody");
+            const p = document.createElement("p");
+
+            p.innerHTML = `<strong>${sender}:</strong> ${text}`;
+
+            chatBody.appendChild(p);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Enter key support
+        document.getElementById("userInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+
+</body>
+</html>
