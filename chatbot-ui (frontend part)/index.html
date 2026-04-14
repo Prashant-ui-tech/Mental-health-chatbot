@@ -30,12 +30,14 @@
     <!-- Chat widget -->
     <div class="chat-icon" onclick="toggleChat()">☁</div>
 
-    <div class="chat-widget" id="chatWidget" style="display: none;">
+    <!-- ✅ Removed inline style (handled by JS) -->
+    <div class="chat-widget" id="chatWidget">
         <div class="chat-header">
             MindEase Chatbot
             <span style="cursor: pointer;" onclick="toggleChat()">✕</span>
         </div>
 
+        <!-- ✅ ID already correct -->
         <div class="chat-body" id="chatBody"></div>
 
         <div class="chat-input">
@@ -86,7 +88,11 @@
             p.innerHTML = `<strong>${sender}:</strong> ${text}`;
 
             chatBody.appendChild(p);
-            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // ✅ ONLY CHANGE: scroll fix
+            setTimeout(() => {
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 50);
         }
 
         // Enter key support
